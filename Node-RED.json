@@ -1,0 +1,1755 @@
+[
+    {
+        "id": "3c4471ee08ffb7ff",
+        "type": "tab",
+        "label": "Flow 7",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "mqtt_ambiente",
+        "type": "mqtt in",
+        "z": "3c4471ee08ffb7ff",
+        "name": "sensor/ambiente",
+        "topic": "IPB/IOT/sensor/ambiente",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "482eb73c09aa7a5d",
+        "nl": false,
+        "rap": false,
+        "inputs": 0,
+        "x": 280,
+        "y": 640,
+        "wires": [
+            [
+                "format_ambiente"
+            ]
+        ]
+    },
+    {
+        "id": "format_ambiente",
+        "type": "function",
+        "z": "3c4471ee08ffb7ff",
+        "name": "Formatar Ambiente",
+        "func": "var lote = global.get(\"lote_ativo\") || \"desconhecido\";\nvar produto = global.get(\"produto_ativo\") || \"produto\";\nvar origem = global.get(\"origem_ativa\") || \"origem\";\n\nmsg.payload = [{\n    measurement: \"ambiente_A\",\n    tags: {\n        local: origem,\n        lote: lote,\n        produto: produto\n    },\n    fields: {\n        temperatura_A: msg.payload.temperatura_A || 0,\n        humidade_A: msg.payload.humidade_A || 0\n    }\n}];\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 550,
+        "y": 640,
+        "wires": [
+            [
+                "e3a064ccad5c365f",
+                "4fa5d3de9345aa71",
+                "293056d0aea7b40b",
+                "865c96efb9033433"
+            ]
+        ]
+    },
+    {
+        "id": "mqtt_luz",
+        "type": "mqtt in",
+        "z": "3c4471ee08ffb7ff",
+        "name": "sensor/luz",
+        "topic": "IPB/IOT/sensor/luz",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "482eb73c09aa7a5d",
+        "nl": false,
+        "rap": false,
+        "inputs": 0,
+        "x": 640,
+        "y": 180,
+        "wires": [
+            [
+                "format_luz"
+            ]
+        ]
+    },
+    {
+        "id": "format_luz",
+        "type": "function",
+        "z": "3c4471ee08ffb7ff",
+        "name": "Formatar Luz",
+        "func": "var lote = global.get(\"lote_ativo\") || \"desconhecido\";\nvar produto = global.get(\"produto_ativo\") || \"produto\";\nvar origem = global.get(\"origem_ativa\") || \"origem\";\n\nmsg.payload = [{\n  measurement: \"luz_A\",\n  tags: {\n    local: origem,\n    lote: lote,\n    produto: produto\n  },\n  fields: {\n    luz_A: msg.payload.luz_A || 0\n  }\n}];\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1010,
+        "y": 180,
+        "wires": [
+            [
+                "e3a064ccad5c365f",
+                "6c33b9337d2e2778",
+                "9595c856c87d90b1"
+            ]
+        ]
+    },
+    {
+        "id": "e3a064ccad5c365f",
+        "type": "influxdb batch",
+        "z": "3c4471ee08ffb7ff",
+        "influxdb": "ed71e7063e827776",
+        "precision": "",
+        "retentionPolicy": "",
+        "name": "",
+        "database": "database",
+        "precisionV18FluxV20": "ms",
+        "retentionPolicyV18Flux": "",
+        "org": "IoT",
+        "bucket": "Projecto_IC",
+        "x": 1470,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "d114b9dcae3e02d4",
+        "type": "mqtt in",
+        "z": "3c4471ee08ffb7ff",
+        "name": "",
+        "topic": "IPB/IOT/sensor/ph",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "482eb73c09aa7a5d",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 250,
+        "y": 480,
+        "wires": [
+            [
+                "c0e9f4103a5282bb"
+            ]
+        ]
+    },
+    {
+        "id": "c0e9f4103a5282bb",
+        "type": "function",
+        "z": "3c4471ee08ffb7ff",
+        "name": "Formatar Ph",
+        "func": "var lote = global.get(\"lote_ativo\") || \"desconhecido\";\nvar produto = global.get(\"produto_ativo\") || \"produto\";\nvar origem = global.get(\"origem_ativa\") || \"origem\";\n\nmsg.payload = [{\n  measurement: \"ph_A\",\n  tags: {\n    local: origem,\n    lote: lote,\n    produto: produto\n  },\n  fields: {\n    ph_A: msg.payload.ph_A || 0\n  }\n}];\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 530,
+        "y": 480,
+        "wires": [
+            [
+                "e3a064ccad5c365f",
+                "d9b56c8a16829aa9",
+                "e75f8cdd43446874"
+            ]
+        ]
+    },
+    {
+        "id": "bf7393f93fca872c",
+        "type": "function",
+        "z": "3c4471ee08ffb7ff",
+        "name": "function 7",
+        "func": "\nvar localForm   = msg.payload.local;\nvar produtoForm = msg.payload.produto;\nvar loteForm    = msg.payload.lote;\nvar quantForm   = msg.payload.quant;\n\n\nglobal.set(\"origem_ativa\",  localForm);\nglobal.set(\"produto_ativo\", produtoForm);\nglobal.set(\"lote_ativo\",    loteForm);\n\n\nmsg.original = {\n  local:   localForm,\n  produto: produtoForm,\n  lote:    loteForm,\n  quant:   quantForm\n};\n\n\nmsg.query = `\n  from(bucket: \"Projecto_IC\")\n    |> range(start: -30d)\n    |> filter(fn: (r) => r._measurement == \"estoque\")\n    |> filter(fn: (r) => r.local == \"${localForm}\"\n                     and r.produto == \"${produtoForm}\"\n                     and r.lote == \"${loteForm}\")\n    |> filter(fn: (r) => r._field == \"quantidade\")\n    |> last()\n`;\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 380,
+        "y": 320,
+        "wires": [
+            [
+                "d40f35a7d717e34f"
+            ]
+        ]
+    },
+    {
+        "id": "73603141fc1c5dbe",
+        "type": "ui_gauge",
+        "z": "3c4471ee08ffb7ff",
+        "name": "",
+        "group": "b4bab5e2b1524d09",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "PH",
+        "label": "units",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "14",
+        "colors": [
+            "#ffff80",
+            "#80ff80",
+            "#ca3838"
+        ],
+        "seg1": "5.5",
+        "seg2": "7.5",
+        "diff": false,
+        "className": "",
+        "x": 1510,
+        "y": 480,
+        "wires": []
+    },
+    {
+        "id": "4fa5d3de9345aa71",
+        "type": "function",
+        "z": "3c4471ee08ffb7ff",
+        "name": "function 8",
+        "func": "msg.payload = msg.payload[0].fields.temperatura_A;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1260,
+        "y": 600,
+        "wires": [
+            [
+                "gauge_temperatura"
+            ]
+        ]
+    },
+    {
+        "id": "d9b56c8a16829aa9",
+        "type": "function",
+        "z": "3c4471ee08ffb7ff",
+        "name": "function 9",
+        "func": "msg.payload = msg.payload[0].fields.ph_A;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1260,
+        "y": 480,
+        "wires": [
+            [
+                "73603141fc1c5dbe"
+            ]
+        ]
+    },
+    {
+        "id": "6c33b9337d2e2778",
+        "type": "function",
+        "z": "3c4471ee08ffb7ff",
+        "name": "function 10",
+        "func": "msg.payload = msg.payload[0].fields.luz_A;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1410,
+        "y": 180,
+        "wires": [
+            [
+                "gauge_luz"
+            ]
+        ]
+    },
+    {
+        "id": "293056d0aea7b40b",
+        "type": "function",
+        "z": "3c4471ee08ffb7ff",
+        "name": "function 11",
+        "func": "msg.payload = msg.payload[0].fields.humidade_A;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1270,
+        "y": 700,
+        "wires": [
+            [
+                "gauge_humidade"
+            ]
+        ]
+    },
+    {
+        "id": "788490e6c7ea4a66",
+        "type": "ui_form",
+        "z": "3c4471ee08ffb7ff",
+        "name": "",
+        "label": "",
+        "group": "e213d4f6410b766c",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "options": [
+            {
+                "label": "Produto",
+                "value": "produto",
+                "type": "text",
+                "required": true,
+                "rows": null
+            },
+            {
+                "label": "Local",
+                "value": "local",
+                "type": "text",
+                "required": true,
+                "rows": null
+            },
+            {
+                "label": "ID do Lote",
+                "value": "lote",
+                "type": "number",
+                "required": true,
+                "rows": null
+            },
+            {
+                "label": "QuantidadeTotal",
+                "value": "quant",
+                "type": "number",
+                "required": true,
+                "rows": null
+            }
+        ],
+        "formValue": {
+            "produto": "",
+            "local": "",
+            "lote": "",
+            "quant": ""
+        },
+        "payload": "",
+        "submit": "submit",
+        "cancel": "cancel",
+        "topic": "topic",
+        "topicType": "msg",
+        "splitLayout": "",
+        "className": "",
+        "x": 170,
+        "y": 320,
+        "wires": [
+            [
+                "bf7393f93fca872c"
+            ]
+        ]
+    },
+    {
+        "id": "gauge_temperatura",
+        "type": "ui_gauge",
+        "z": "3c4471ee08ffb7ff",
+        "name": "Temperatura",
+        "group": "b4bab5e2b1524d09",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "Temperatura",
+        "label": "°C",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "45",
+        "colors": [
+            "#ffff80",
+            "#80ff80",
+            "#ffff80"
+        ],
+        "seg1": 10,
+        "seg2": "30",
+        "diff": false,
+        "className": "",
+        "x": 1530,
+        "y": 600,
+        "wires": []
+    },
+    {
+        "id": "gauge_humidade",
+        "type": "ui_gauge",
+        "z": "3c4471ee08ffb7ff",
+        "name": "humidade",
+        "group": "b4bab5e2b1524d09",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "Humidade",
+        "label": "%",
+        "format": "{{value}}",
+        "min": 0,
+        "max": 100,
+        "colors": [
+            "#ffff00",
+            "#80ff80",
+            "#ffff80"
+        ],
+        "seg1": "35",
+        "seg2": 70,
+        "diff": false,
+        "className": "",
+        "x": 1520,
+        "y": 700,
+        "wires": []
+    },
+    {
+        "id": "gauge_luz",
+        "type": "ui_gauge",
+        "z": "3c4471ee08ffb7ff",
+        "name": "LUZ",
+        "group": "b4bab5e2b1524d09",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "LUZ",
+        "label": "%",
+        "format": "{{value}}",
+        "min": 0,
+        "max": 100,
+        "colors": [
+            "#ffff00",
+            "#80ff80",
+            "#80ff80"
+        ],
+        "seg1": "50",
+        "seg2": "80",
+        "diff": false,
+        "className": "",
+        "x": 1630,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "2a4d62192c1a93c4",
+        "type": "ui_form",
+        "z": "3c4471ee08ffb7ff",
+        "name": "",
+        "label": "",
+        "group": "207057a73a169504",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "options": [
+            {
+                "label": "Local",
+                "value": "local",
+                "type": "text",
+                "required": true,
+                "rows": null
+            },
+            {
+                "label": "Lote",
+                "value": "lote",
+                "type": "text",
+                "required": true,
+                "rows": null
+            }
+        ],
+        "formValue": {
+            "local": "",
+            "lote": ""
+        },
+        "payload": "",
+        "submit": "submit",
+        "cancel": "cancel",
+        "topic": "topic",
+        "topicType": "msg",
+        "splitLayout": "",
+        "className": "",
+        "x": 330,
+        "y": 1160,
+        "wires": [
+            [
+                "3fc149e10d5017ea"
+            ]
+        ]
+    },
+    {
+        "id": "fdb65e1688639d84",
+        "type": "influxdb in",
+        "z": "3c4471ee08ffb7ff",
+        "influxdb": "ed71e7063e827776",
+        "name": "",
+        "query": "msg.query",
+        "rawOutput": false,
+        "precision": "",
+        "retentionPolicy": "",
+        "org": "IoT",
+        "x": 870,
+        "y": 1160,
+        "wires": [
+            [
+                "00b064013b994bb7",
+                "77ed738e27b829be",
+                "ffd6e5d842807916",
+                "ffc28ae4f38c25e5",
+                "0b829821d66cefce"
+            ]
+        ]
+    },
+    {
+        "id": "00b064013b994bb7",
+        "type": "debug",
+        "z": "3c4471ee08ffb7ff",
+        "name": "debug 27",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1140,
+        "y": 1040,
+        "wires": []
+    },
+    {
+        "id": "chart_temperatura",
+        "type": "ui_chart",
+        "z": "3c4471ee08ffb7ff",
+        "name": "Temperatura",
+        "group": "207057a73a169504",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "label": "Temperatura/Humidade",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "0",
+        "ymax": "100",
+        "removeOlder": "1",
+        "removeOlderPoints": "",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#ff6600",
+            "#3fadb5",
+            "#87a980",
+            "#000000",
+            "#000000",
+            "#000000",
+            "#000000",
+            "#000000",
+            "#000000"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 1390,
+        "y": 1160,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "229d8d8b5eeb5186",
+        "type": "debug",
+        "z": "3c4471ee08ffb7ff",
+        "name": "debug 28",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1400,
+        "y": 1040,
+        "wires": []
+    },
+    {
+        "id": "957c0224f3b4a2ac",
+        "type": "ui_chart",
+        "z": "3c4471ee08ffb7ff",
+        "name": "",
+        "group": "207057a73a169504",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "label": "PH",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "1",
+        "ymax": "14",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 1370,
+        "y": 1240,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "6f8a61854a7ea129",
+        "type": "ui_chart",
+        "z": "3c4471ee08ffb7ff",
+        "name": "",
+        "group": "207057a73a169504",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "label": "LUZ",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 1370,
+        "y": 1320,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "e75f8cdd43446874",
+        "type": "debug",
+        "z": "3c4471ee08ffb7ff",
+        "name": "debug 21",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 720,
+        "y": 560,
+        "wires": []
+    },
+    {
+        "id": "865c96efb9033433",
+        "type": "debug",
+        "z": "3c4471ee08ffb7ff",
+        "name": "debug 22",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 760,
+        "y": 720,
+        "wires": []
+    },
+    {
+        "id": "9595c856c87d90b1",
+        "type": "debug",
+        "z": "3c4471ee08ffb7ff",
+        "name": "debug 23",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1200,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "9a9c09da9ccb2094",
+        "type": "function",
+        "z": "3c4471ee08ffb7ff",
+        "name": "function 16",
+        "func": "\nvar novaQuantidade = Number(msg.original.quant) || 0;\n\n\nvar quantidadeExistente = 0;\nif (Array.isArray(msg.payload) && msg.payload.length > 0) {\n\n  if (typeof msg.payload[0]._value === 'number') {\n    quantidadeExistente = msg.payload[0]._value;\n  }\n}\n\nvar totalFinal = quantidadeExistente + novaQuantidade;\n\n\nmsg.payload = [{\n  measurement: \"estoque\",\n  tags: {\n    local:   msg.original.local,\n    produto: msg.original.produto,\n    lote:    msg.original.lote\n  },\n  fields: {\n    quantidade: totalFinal\n  }\n}];\n\n\nglobal.set(\"quantidade_total\", totalFinal);\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 890,
+        "y": 320,
+        "wires": [
+            [
+                "e3a064ccad5c365f",
+                "4faf7d1c29860345"
+            ]
+        ]
+    },
+    {
+        "id": "77ed738e27b829be",
+        "type": "function",
+        "z": "3c4471ee08ffb7ff",
+        "name": "function 17",
+        "func": "let quantityRecords = msg.payload.filter(record => record._field === \"quantidade\");\nif (quantityRecords.length > 0) {\n    // Encontra o registo com o timestamp mais recente\n    let latest = quantityRecords.reduce((prev, current) => (prev._time > current._time) ? prev : current);\n    let quantidade = latest._value || 0;\n    msg.payload = `Quantidade atual: ${quantidade} kg`;\n} else {\n    msg.payload = \"Quantidade atual: 0 kg\";\n}\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1150,
+        "y": 1400,
+        "wires": [
+            [
+                "b225117d1244661a"
+            ]
+        ]
+    },
+    {
+        "id": "b225117d1244661a",
+        "type": "ui_text",
+        "z": "3c4471ee08ffb7ff",
+        "group": "207057a73a169504",
+        "order": 4,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "text",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 1370,
+        "y": 1400,
+        "wires": []
+    },
+    {
+        "id": "your_unique_id_here",
+        "type": "ui_dropdown",
+        "z": "3c4471ee08ffb7ff",
+        "name": "Intervalo de Tempo",
+        "label": "Intervalo de Tempo",
+        "tooltip": "",
+        "place": "Selecione o intervalo",
+        "group": "bc039d2181525c6b",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "multiple": false,
+        "options": [
+            {
+                "label": "Última 1 hora",
+                "value": "-1h",
+                "type": "str"
+            },
+            {
+                "label": "Últimas 2 horas",
+                "value": "-2h",
+                "type": "str"
+            },
+            {
+                "label": "Último dia",
+                "value": "-1d",
+                "type": "str"
+            },
+            {
+                "label": "Últimos 3 dias",
+                "value": "-3d",
+                "type": "str"
+            },
+            {
+                "label": "Últimos 7 dias",
+                "value": "-7d",
+                "type": "str"
+            }
+        ],
+        "payload": "",
+        "topic": "topic",
+        "topicType": "msg",
+        "className": "",
+        "x": 290,
+        "y": 1080,
+        "wires": [
+            [
+                "3fc149e10d5017ea"
+            ]
+        ]
+    },
+    {
+        "id": "3fc149e10d5017ea",
+        "type": "function",
+        "z": "3c4471ee08ffb7ff",
+        "name": "function 12",
+        "func": "let local = msg.payload.local;\nlet lote = msg.payload.lote;\nlet time_range = msg.payload.time_range || \"-7d\";\n\nmsg.query = `\nfrom(bucket: \"Projecto_IC\")\n  |> range(start: ${time_range})\n  |> filter(fn: (r) => r._measurement == \"ambiente_A\" or r._measurement == \"ph_A\" or r._measurement == \"luz_A\" or r._measurement == \"estoque\")\n  |> filter(fn: (r) => r._field == \"temperatura_A\" or r._field == \"humidade_A\" or r._field == \"ph_A\" or r._field == \"luz_A\" or r._field == \"quantidade\")\n  |> filter(fn: (r) => r.local == \"${local}\")\n  |> filter(fn: (r) => r.lote == \"${lote}\")\n  |> keep(columns: [\"_time\", \"_value\", \"_field\"])\n`;\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 590,
+        "y": 1160,
+        "wires": [
+            [
+                "fdb65e1688639d84"
+            ]
+        ]
+    },
+    {
+        "id": "ffd6e5d842807916",
+        "type": "function",
+        "z": "3c4471ee08ffb7ff",
+        "name": "function 13",
+        "func": "\nlet temp = [];\nlet hum  = [];\nlet labels = [];\n\nfor (const row of msg.payload) {\n  let t = new Date(row._time).getTime();\n\n  if (row._field === \"temperatura_A\") {\n    temp.push({ x: t, y: row._value });\n    labels.push(new Date(t).toLocaleTimeString());\n  }\n  if (row._field === \"humidade_A\") {\n    hum.push({ x: t, y: row._value });\n  }\n}\n\nmsg.payload = [{\n  series : [\"temperatura\", \"humidade\"],\n  data   : [ temp, hum ],\n  labels : labels\n}];\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1150,
+        "y": 1160,
+        "wires": [
+            [
+                "chart_temperatura"
+            ]
+        ]
+    },
+    {
+        "id": "ffc28ae4f38c25e5",
+        "type": "function",
+        "z": "3c4471ee08ffb7ff",
+        "name": "function 14",
+        "func": "/* --- FUNCTION  PH  --- */\n\nlet pontos = [];\nlet labels = [];\n\nfor (const row of msg.payload) {\n  if (row._field === \"ph_A\" && row._value !== null) {\n    const t = new Date(row._time).getTime();\n    pontos.push({ x: t, y: row._value });\n    labels.push(new Date(t).toLocaleTimeString());\n  }\n}\n\npontos.sort((a, b) => a.x - b.x);\n\nmsg.payload = [{\n  series : [\"pH\"],\n  data   : [ pontos ],\n  labels : labels\n}];\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1150,
+        "y": 1240,
+        "wires": [
+            [
+                "957c0224f3b4a2ac"
+            ]
+        ]
+    },
+    {
+        "id": "0b829821d66cefce",
+        "type": "function",
+        "z": "3c4471ee08ffb7ff",
+        "name": "function 15",
+        "func": "/*  ---- FUNCTION  LUZ  ----  */\n\nlet pontos = [];\nlet labels = [];\n\nfor (const row of msg.payload) {\n  if (row._field === \"luz_A\" && row._value !== null) {\n    const t = new Date(row._time).getTime();\n    pontos.push({ x: t, y: row._value });\n    labels.push(new Date(t).toLocaleTimeString());\n  }\n}\n\npontos.sort((a, b) => a.x - b.x);\n\nmsg.payload = [{\n  series : [\"Luz\"],\n  data   : [ pontos ],\n  labels : labels\n}];\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1150,
+        "y": 1320,
+        "wires": [
+            [
+                "6f8a61854a7ea129"
+            ]
+        ]
+    },
+    {
+        "id": "f263b65979d62c02",
+        "type": "mqtt in",
+        "z": "3c4471ee08ffb7ff",
+        "name": "Localização Transporte",
+        "topic": "owntracks/Adriano/transport",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "482eb73c09aa7a5d",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 620,
+        "y": 2080,
+        "wires": [
+            [
+                "426e7fb2d63578e9"
+            ]
+        ]
+    },
+    {
+        "id": "222376a7a5df844b",
+        "type": "worldmap",
+        "z": "3c4471ee08ffb7ff",
+        "name": "Mapa Transporte",
+        "lat": "",
+        "lon": "",
+        "zoom": "",
+        "layer": "OSMG",
+        "cluster": "",
+        "maxage": "",
+        "usermenu": "show",
+        "layers": "show",
+        "panit": "false",
+        "panlock": "false",
+        "zoomlock": "false",
+        "hiderightclick": "false",
+        "coords": "none",
+        "showgrid": "false",
+        "showruler": "false",
+        "allowFileDrop": "false",
+        "path": "/worldmap",
+        "overlist": "DR,CO,RA,DN",
+        "maplist": "OSMG,OSMC,EsriC,EsriS,UKOS",
+        "mapname": "",
+        "mapurl": "",
+        "mapopt": "",
+        "mapwms": false,
+        "x": 1580,
+        "y": 2200,
+        "wires": []
+    },
+    {
+        "id": "426e7fb2d63578e9",
+        "type": "function",
+        "z": "3c4471ee08ffb7ff",
+        "name": "Processar Localização",
+        "func": "if (msg.payload && msg.payload._type === \"location\") {\n    const lat = msg.payload.lat;\n    const lon = msg.payload.lon;\n    const nome = \"Transporte 1\";\n\n    global.set(\"latitude\", lat);\n    global.set(\"longitude\", lon);\n\n    msg.payload = {\n        name: nome,\n        lat: lat,\n        lon: lon,\n        icon: \"truck\"\n    };\n\n    return msg;\n}\nreturn null;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1160,
+        "y": 2080,
+        "wires": [
+            [
+                "222376a7a5df844b",
+                "11e1c79a77c5f203"
+            ]
+        ]
+    },
+    {
+        "id": "1a7645dd56d1c452",
+        "type": "ui_form",
+        "z": "3c4471ee08ffb7ff",
+        "name": "Formulário Transporte",
+        "label": "Registo de Produto",
+        "group": "5201c66cf03ff036",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "options": [
+            {
+                "label": "Produto",
+                "value": "produto",
+                "type": "text",
+                "required": true,
+                "rows": null
+            },
+            {
+                "label": "Local",
+                "value": "local",
+                "type": "text",
+                "required": true,
+                "rows": null
+            },
+            {
+                "label": "Validade",
+                "value": "validade",
+                "type": "date",
+                "required": true,
+                "rows": null
+            },
+            {
+                "label": "Quantidade",
+                "value": "quantidade",
+                "type": "number",
+                "required": true,
+                "rows": null
+            },
+            {
+                "label": "Lote",
+                "value": "lote",
+                "type": "number",
+                "required": true,
+                "rows": null
+            },
+            {
+                "label": "Destino",
+                "value": "destino",
+                "type": "text",
+                "required": true,
+                "rows": null
+            },
+            {
+                "label": "Estabelecimento",
+                "value": "estab",
+                "type": "text",
+                "required": true,
+                "rows": null
+            }
+        ],
+        "formValue": {
+            "produto": "",
+            "local": "",
+            "validade": "",
+            "quantidade": "",
+            "lote": "",
+            "destino": "",
+            "estab": ""
+        },
+        "payload": "",
+        "submit": "submit",
+        "cancel": "cancel",
+        "topic": "topic",
+        "topicType": "msg",
+        "splitLayout": "",
+        "className": "",
+        "x": 260,
+        "y": 2000,
+        "wires": [
+            [
+                "a74fbb429f15ab91",
+                "856123a1df8c6220"
+            ]
+        ]
+    },
+    {
+        "id": "cb97bb5e27293c1f",
+        "type": "mqtt in",
+        "z": "3c4471ee08ffb7ff",
+        "name": "Dados Ambiente Transporte",
+        "topic": "IPB/IOT/sensor/ambiente/transporte",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "482eb73c09aa7a5d",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 820,
+        "y": 1860,
+        "wires": [
+            [
+                "9fc1292cf34b6305"
+            ]
+        ]
+    },
+    {
+        "id": "87fe56303e0c4f50",
+        "type": "influxdb batch",
+        "z": "3c4471ee08ffb7ff",
+        "influxdb": "ed71e7063e827776",
+        "precision": "",
+        "retentionPolicy": "",
+        "name": "InfluxDB",
+        "database": "database",
+        "precisionV18FluxV20": "ms",
+        "retentionPolicyV18Flux": "",
+        "org": "IoT",
+        "bucket": "Projecto_IC",
+        "x": 1480,
+        "y": 2000,
+        "wires": []
+    },
+    {
+        "id": "11e1c79a77c5f203",
+        "type": "debug",
+        "z": "3c4471ee08ffb7ff",
+        "name": "Debug Localização",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1570,
+        "y": 2080,
+        "wires": []
+    },
+    {
+        "id": "a6b08dc6ae9fc2d8",
+        "type": "debug",
+        "z": "3c4471ee08ffb7ff",
+        "name": "Debug Ambiente",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1550,
+        "y": 1700,
+        "wires": []
+    },
+    {
+        "id": "9fc1292cf34b6305",
+        "type": "function",
+        "z": "3c4471ee08ffb7ff",
+        "name": "Formatar Ambiente B",
+        "func": "\nconst latitude = global.get(\"latitude\") || 0;\nconst longitude = global.get(\"longitude\") || 0;\n\nif (!msg.payload || typeof msg.payload !== \"object\") {\n    node.error(\"Payload inválido: \" + JSON.stringify(msg.payload), msg);\n    return null;\n}\n\nconst temp = msg.payload.temperatura_B;\nconst humidade = msg.payload.humidade_B;\n\nvar lote = global.get(\"lote_ativo\") || \"desconhecido\";\nvar produto = global.get(\"produto_ativo\") || \"produto\";\nvar local = global.get(\"origem_ativa\") || \"origem\";\nvar destino = global.get(\"destino\") || \"destino\";\nvar estab = global.get(\"estab\") || \"estab\";\n\n\nmsg.payload = [{\n    measurement: \"ambiente_B\",\n    tags: {\n        local: local,\n        lote: lote,\n        produto: produto,\n        destino:destino,\n        estab:estab\n    },\n    fields: {\n        latitude: parseFloat(latitude),\n        longitude: parseFloat(longitude),\n        temperatura_B: temp,\n        humidade_B: humidade\n    }\n}];\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1080,
+        "y": 1700,
+        "wires": [
+            [
+                "a6b08dc6ae9fc2d8",
+                "87fe56303e0c4f50"
+            ]
+        ]
+    },
+    {
+        "id": "b643e2ce497d77df",
+        "type": "influxdb in",
+        "z": "3c4471ee08ffb7ff",
+        "influxdb": "ed71e7063e827776",
+        "name": "Consulta Estoque",
+        "query": "msg.query",
+        "rawOutput": false,
+        "precision": "",
+        "retentionPolicy": "",
+        "org": "IoT",
+        "x": 770,
+        "y": 2000,
+        "wires": [
+            [
+                "521e28d8dc1196c9"
+            ]
+        ]
+    },
+    {
+        "id": "a74fbb429f15ab91",
+        "type": "function",
+        "z": "3c4471ee08ffb7ff",
+        "name": "function 6",
+        "func": "const produto = msg.payload.produto || \"\";\nconst local = msg.payload.local || \"\";\nconst lote = msg.payload.lote || \"\";\nconst destino = msg.payload.destino  || \"\";\nconst estab = msg.payload.estab || \"\";\n\nmsg.formData = msg.payload; \nmsg.query = `\n    from(bucket: \"Projecto_IC\")\n    |> range(start: -30d)\n    |> filter(fn: (r) => r._measurement == \"estoque\")\n    |> filter(fn: (r) => r.produto == \"${produto}\" and r.local == \"${local}\" and r.lote == \"${lote}\")\n    |> filter(fn: (r) => r._field == \"quantidade\")\n    |> last()\n`;\nreturn msg;  ",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 540,
+        "y": 2000,
+        "wires": [
+            [
+                "b643e2ce497d77df",
+                "e027b26b7340de85"
+            ]
+        ]
+    },
+    {
+        "id": "521e28d8dc1196c9",
+        "type": "function",
+        "z": "3c4471ee08ffb7ff",
+        "name": "",
+        "func": "const formData = msg.formData; // Dados do formulário\nconst stockData = msg.payload; // Dados do InfluxDB\n\nif (!stockData || stockData.length === 0) {\n  node.warn(\"Produto não encontrado no estoque.\");\n  return [null, { payload: \"ERRO: Produto não encontrado no estoque.\" }];\n}\n\nconst currentStock = stockData[0]._value;\n\nlet validadeTratada;\ntry {\n  // Converter para timestamp UNIX em nanossegundos (formato ideal para InfluxDB)\n  validadeTratada = new Date(formData.validade).getTime() * 1000000;\n\n  // Verificação adicional\n  if (isNaN(validadeTratada)) {\n    throw new Error(\"Data inválida\");\n  }\n} catch (e) {\n  node.error(`Erro ao processar data: ${e.message}`, msg);\n  validadeTratada = 0; // Valor padrão se conversão falhar\n}\n\nif (currentStock < formData.quantidade) {\n  node.warn(`Quantidade insuficiente! Disponível: ${currentStock}, Solicitado: ${formData.quantidade}`);\n  return [null, { payload: `ERRO: Quantidade insuficiente (${currentStock} disponíveis)` }];\n}\n\nconst newStock = currentStock - formData.quantidade;\n\nmsg.payload = [\n  {\n    measurement: \"transporte_registo\",\n    tags: {\n      lote: formData.lote,\n      produto: formData.produto,\n      local: formData.local,\n      validade: formData.validade,\n      destino: formData.destino,\n      estab:formData.estab\n    },\n    fields: {\n      quantidade_transportada: formData.quantidade,\n    }\n  },\n  {\n    measurement: \"estoque\",\n    tags: {\n      lote: formData.lote,\n      produto: formData.produto,\n      local: formData.local\n    },\n    fields: {\n      quantidade: newStock\n    }\n  }\n];\n\nreturn [msg, null]; // Saída 1: dados para InfluxDB, Saída 2: erro (se houver)",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1020,
+        "y": 2000,
+        "wires": [
+            [
+                "87fe56303e0c4f50",
+                "6640d6cae6dd82c9"
+            ]
+        ]
+    },
+    {
+        "id": "6640d6cae6dd82c9",
+        "type": "debug",
+        "z": "3c4471ee08ffb7ff",
+        "name": "Debug Validade",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1200,
+        "y": 1940,
+        "wires": []
+    },
+    {
+        "id": "e027b26b7340de85",
+        "type": "debug",
+        "z": "3c4471ee08ffb7ff",
+        "name": "debug 24",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 720,
+        "y": 1800,
+        "wires": []
+    },
+    {
+        "id": "856123a1df8c6220",
+        "type": "function",
+        "z": "3c4471ee08ffb7ff",
+        "name": "function 18",
+        "func": "global.set(\"lote_ativo\", msg.payload.lote);\nglobal.set(\"produto_ativo\", msg.payload.produto);\nglobal.set(\"origem_ativa\", msg.payload.local);\nglobal.set(\"destino\", msg.payload.destino);\nglobal.set(\"estab\", msg.payload.estab);\n\n\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 550,
+        "y": 1700,
+        "wires": [
+            [
+                "9fc1292cf34b6305"
+            ]
+        ]
+    },
+    {
+        "id": "e4adfad650746a44",
+        "type": "ui_form",
+        "z": "3c4471ee08ffb7ff",
+        "name": "Consulta Produto Final",
+        "label": "Consulta Produto Final",
+        "group": "0f5da9e3326be007",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "options": [
+            {
+                "label": "Destino",
+                "value": "destino",
+                "type": "text",
+                "required": true,
+                "rows": null
+            },
+            {
+                "label": "Estabelecimento",
+                "value": "estab",
+                "type": "text",
+                "required": true,
+                "rows": null
+            }
+        ],
+        "formValue": {
+            "destino": "",
+            "estab": ""
+        },
+        "payload": "",
+        "submit": "submit",
+        "cancel": "cancel",
+        "topic": "topic",
+        "topicType": "msg",
+        "splitLayout": "",
+        "className": "",
+        "x": 360,
+        "y": 2860,
+        "wires": [
+            [
+                "e2977ab7a69a8862"
+            ]
+        ]
+    },
+    {
+        "id": "e2977ab7a69a8862",
+        "type": "function",
+        "z": "3c4471ee08ffb7ff",
+        "name": "Formatar Consulta ",
+        "func": "const destino = msg.payload.destino || '';\nconst estab = msg.payload.estab || '';\n\nmsg.query = `\nfrom(bucket: \"Projecto_IC\")\n  |> range(start: -30d)\n  |> filter(fn: (r) => r._measurement == \"transporte_registo\")\n  |> filter(fn: (r) => r._field == \"quantidade_transportada\")\n  |> filter(fn: (r) => r.destino == \"${destino}\")\n  |> filter(fn: (r) => r.estab == \"${estab}\")\n  |> keep(columns: [\"_time\", \"_value\", \"produto\", \"validade\", \"local\", \"destino\", \"estab\", \"lote\"])\n`;\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 610,
+        "y": 2860,
+        "wires": [
+            [
+                "80dc9341a15707c0"
+            ]
+        ]
+    },
+    {
+        "id": "80dc9341a15707c0",
+        "type": "influxdb in",
+        "z": "3c4471ee08ffb7ff",
+        "influxdb": "ed71e7063e827776",
+        "name": "Consulta Transporte",
+        "query": "msg.query",
+        "rawOutput": false,
+        "precision": "",
+        "retentionPolicy": "",
+        "org": "IoT",
+        "x": 940,
+        "y": 2860,
+        "wires": [
+            [
+                "cd850f3f89e5e92c"
+            ]
+        ]
+    },
+    {
+        "id": "cd850f3f89e5e92c",
+        "type": "function",
+        "z": "3c4471ee08ffb7ff",
+        "name": "Formatar Saída",
+        "func": "let output = [];\n\nconst today = new Date();\nconst twoWeeksInMs = 14 * 24 * 60 * 60 * 1000;\n\nif (!Array.isArray(msg.payload)) {\n    node.error(\"msg.payload não é um array\", msg);\n    return null;\n}\n\nfor (const row of msg.payload) {\n    let warning = false;\n    let validadeStr = 'N/A';\n\n    if (row.validade) {\n\n            const validadeDate = new Date(row.validade);\n            if (!isNaN(validadeDate.getTime())) {\n                validadeStr = validadeDate.toLocaleDateString('pt-PT');\n                const timeDiff = validadeDate.getTime() - today.getTime();\n                if (timeDiff <= twoWeeksInMs && timeDiff > 0) {\n                    warning = true;\n                }\n            }\n    }\n\n    output.push({\n        produto: row.produto || 'N/A',\n        quantidade: row._value !== undefined ? row._value : 'N/A',\n        validade: validadeStr,\n        destino: row.destino || 'N/A',\n        estab: row.estab || 'N/A',\n        local: row.local || 'N/A',\n        warning: warning\n    });\n}\n\nmsg.payload = output;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1180,
+        "y": 2860,
+        "wires": [
+            [
+                "9e7fcdc4f3d5b91a"
+            ]
+        ]
+    },
+    {
+        "id": "9e7fcdc4f3d5b91a",
+        "type": "ui_template",
+        "z": "3c4471ee08ffb7ff",
+        "group": "0f5da9e3326be007",
+        "name": "Tabela de Transporte",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "format": "<table style=\"width:100%;height:300%; border-collapse: collapse;\">\n  <thead>\n    <tr style=\"background-color: #f2f2f2;\">\n      <th>Produto</th>\n      <th>Quantidade</th>\n      <th>Validade</th>\n      <th>Destino</th>\n      <th>Aviso</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr  ng-repeat=\"item in msg.payload\">\n      <td>{{item.produto}}</td>\n      <td>{{item.quantidade}}</td> \n      <td>{{item.validade}}</td>\n      <td>{{item.destino}}</td>\n      <td>\n        <span ng-if=\"item.warning\" style=\"color: red;\">⚠️ Validade próxima!</span>\n      </td>\n    </tr>\n  </tbody>\n</table>",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 1540,
+        "y": 2860,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "d40f35a7d717e34f",
+        "type": "influxdb in",
+        "z": "3c4471ee08ffb7ff",
+        "influxdb": "ed71e7063e827776",
+        "name": "",
+        "query": "msg.query",
+        "rawOutput": false,
+        "precision": "",
+        "retentionPolicy": "",
+        "org": "IoT",
+        "x": 610,
+        "y": 320,
+        "wires": [
+            [
+                "9a9c09da9ccb2094"
+            ]
+        ]
+    },
+    {
+        "id": "4faf7d1c29860345",
+        "type": "debug",
+        "z": "3c4471ee08ffb7ff",
+        "name": "debug 25",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1080,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "abcd1111abcd1111",
+        "type": "inject",
+        "z": "3c4471ee08ffb7ff",
+        "name": "Buscar ambiente_B",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "10",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 380,
+        "y": 2460,
+        "wires": [
+            [
+                "abcd2222abcd2222"
+            ]
+        ]
+    },
+    {
+        "id": "abcd2222abcd2222",
+        "type": "function",
+        "z": "3c4471ee08ffb7ff",
+        "name": "Monta query ambiente_B",
+        "func": "// Extrai do contexto global (ou substitua pelos valores fixos desejados)\nvar localDesejado   = global.get(\"origem_ativa\")  || \"desconhecido\";\nvar produtoDesejado = global.get(\"produto_ativo\") || \"produto\";\nvar loteDesejado    = global.get(\"lote_ativo\")    || \"lote\";\n\n// Monta a query Flux para buscar o último ponto de ambiente_B\nmsg.query = `\n  from(bucket: \"Projecto_IC\")\n    |> range(start: -24h)\n    |> filter(fn: (r) =>\n         r._measurement == \"ambiente_B\" and\n         r.local       == \"${localDesejado}\" and\n         r.produto     == \"${produtoDesejado}\" and\n         r.lote        == \"${loteDesejado}\"\n    )\n    |> last()\n`;\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 630,
+        "y": 2460,
+        "wires": [
+            [
+                "abcd3333abcd3333"
+            ]
+        ]
+    },
+    {
+        "id": "abcd3333abcd3333",
+        "type": "influxdb in",
+        "z": "3c4471ee08ffb7ff",
+        "influxdb": "ed71e7063e827776",
+        "name": "InfluxDB In (ambiente_B)",
+        "query": "msg.query",
+        "rawOutput": false,
+        "precision": "",
+        "retentionPolicy": "",
+        "org": "IoT",
+        "x": 880,
+        "y": 2460,
+        "wires": [
+            [
+                "abcd4444abcd4444"
+            ]
+        ]
+    },
+    {
+        "id": "abcd4444abcd4444",
+        "type": "function",
+        "z": "3c4471ee08ffb7ff",
+        "name": "Separa temp/hum/aviso",
+        "func": "// --- Função “Separa temp/hum/aviso” (3 saídas) ---\n\n// 1) Extrai temperatura_B e humidade_B de msg.payload (array de objetos)\nvar temp = null;\nvar hum  = null;\n\nif (Array.isArray(msg.payload) && msg.payload.length > 0) {\n  msg.payload.forEach(function(ponto) {\n    if (ponto._field === \"temperatura_B\") {\n      temp = ponto._value;\n    }\n    if (ponto._field === \"humidade_B\") {\n      hum = ponto._value;\n    }\n  });\n}\n\n// 2) Defina aqui os limites que deseja monitorar\nvar limiteTempBaixa = 10;   // °C\nvar limiteTempAlta  = 30;   // °C\nvar limiteHumBaixa  = 30;   // %\nvar limiteHumAlta   = 80;   // %\n\n// 3) Prepare as mensagens de saída (sempre criamos um objeto, \n//    mesmo que seja só para “limpar” o aviso)\nvar msgTemp  = { payload: null };\nvar msgHum   = { payload: null };\nvar msgAviso = { payload: \"\" };\n\n// 4) Tratar TEMPERATURA\nif (typeof temp === \"number\") {\n  msgTemp.payload = temp;\n  \n  // Verifica se temperatura está fora da faixa desejada\n  if (temp < limiteTempBaixa) {\n    msgAviso.payload += \"⚠️ Temperatura muito baixa (\" + temp.toFixed(1) + \" °C)\\n\";\n  } else if (temp > limiteTempAlta) {\n    msgAviso.payload += \"⚠️ Temperatura muito alta (\"  + temp.toFixed(1) + \" °C)\\n\";\n  }\n} else {\n  // Se não encontrou valor de temperatura, avisa\n  msgAviso.payload += \"⚠️ Sem dado de temperatura disponível\\n\";\n}\n\n// 5) Tratar HUMIDADE\nif (typeof hum === \"number\") {\n  msgHum.payload = hum;\n  \n  // Verifica se humidade está fora da faixa desejada\n  if (hum < limiteHumBaixa) {\n    msgAviso.payload += \"⚠️ Humidade muito baixa (\" + hum.toFixed(1) + \" %)\\n\";\n  } else if (hum > limiteHumAlta) {\n    msgAviso.payload += \"⚠️ Humidade muito alta (\"  + hum.toFixed(1) + \" %)\\n\";\n  }\n} else {\n  // Se não encontrou valor de humidade, avisa\n  msgAviso.payload += \"⚠️ Sem dado de humidade disponível\\n\";\n}\n\n// 6) Remover a última quebra de linha, se houver\nmsgAviso.payload = msgAviso.payload.trimEnd();\n\n// 7) Retorna sempre os três outputs.\n//    - Saída 1: msgTemp  (temperatura ou null)\n//    - Saída 2: msgHum   (humidade ou null)\n//    - Saída 3: msgAviso (string vazia para limpar ou texto com avisos)\nreturn [ msgTemp, msgHum, msgAviso ];\n\n",
+        "outputs": 3,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1150,
+        "y": 2460,
+        "wires": [
+            [
+                "abcd5555abcd5555"
+            ],
+            [
+                "abcd6666abcd6666"
+            ],
+            [
+                "abcd7777abcd7777"
+            ]
+        ]
+    },
+    {
+        "id": "abcd5555abcd5555",
+        "type": "ui_gauge",
+        "z": "3c4471ee08ffb7ff",
+        "name": "Temperatura (°C)",
+        "group": "866f60495e96129a",
+        "order": 0,
+        "width": 3,
+        "height": 2,
+        "gtype": "gage",
+        "title": "Temperatura",
+        "label": "°C",
+        "format": "{{value}}",
+        "min": 0,
+        "max": 50,
+        "colors": [
+            "#f2eb07",
+            "#3ef226",
+            "#e8e117"
+        ],
+        "seg1": "10",
+        "seg2": "30",
+        "diff": false,
+        "className": "",
+        "x": 1410,
+        "y": 2380,
+        "wires": []
+    },
+    {
+        "id": "abcd6666abcd6666",
+        "type": "ui_gauge",
+        "z": "3c4471ee08ffb7ff",
+        "name": "Humidade (%)",
+        "group": "866f60495e96129a",
+        "order": 1,
+        "width": 3,
+        "height": 2,
+        "gtype": "gage",
+        "title": "Humidade",
+        "label": "%",
+        "format": "{{value}}",
+        "min": 0,
+        "max": 100,
+        "colors": [
+            "#e3dd26",
+            "#23fb47",
+            "#f4ee43"
+        ],
+        "seg1": "30",
+        "seg2": "80",
+        "diff": false,
+        "className": "",
+        "x": 1420,
+        "y": 2460,
+        "wires": []
+    },
+    {
+        "id": "abcd7777abcd7777",
+        "type": "ui_text",
+        "z": "3c4471ee08ffb7ff",
+        "group": "866f60495e96129a",
+        "order": 2,
+        "width": 6,
+        "height": 1,
+        "name": "Aviso Ambiente B",
+        "label": "Avisos:",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "x": 1410,
+        "y": 2580,
+        "wires": []
+    },
+    {
+        "id": "482eb73c09aa7a5d",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "broker.emqx.io",
+        "port": 1883,
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": 60,
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "ed71e7063e827776",
+        "type": "influxdb",
+        "hostname": "127.0.0.1",
+        "port": 8086,
+        "protocol": "http",
+        "database": "database",
+        "name": "",
+        "usetls": false,
+        "tls": "",
+        "influxdbVersion": "2.0",
+        "url": "http://localhost:8086",
+        "timeout": 10,
+        "rejectUnauthorized": true
+    },
+    {
+        "id": "b4bab5e2b1524d09",
+        "type": "ui_group",
+        "name": "Default",
+        "tab": "7eccd24e4b2d5541",
+        "order": 2,
+        "disp": true,
+        "width": 6,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "e213d4f6410b766c",
+        "type": "ui_group",
+        "name": "RegistarProduto",
+        "tab": "401280e95cbae6e4",
+        "order": 1,
+        "disp": true,
+        "width": 6,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "207057a73a169504",
+        "type": "ui_group",
+        "name": "Consultar ",
+        "tab": "7eccd24e4b2d5541",
+        "order": 1,
+        "disp": true,
+        "width": 6,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "bc039d2181525c6b",
+        "type": "ui_group",
+        "name": "Periodo Tempo",
+        "tab": "7eccd24e4b2d5541",
+        "order": 3,
+        "disp": true,
+        "width": 6,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "5201c66cf03ff036",
+        "type": "ui_group",
+        "name": "Enviar Produto",
+        "tab": "a9e7d6c5efdac271",
+        "order": 1,
+        "disp": true,
+        "width": 6,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "0f5da9e3326be007",
+        "type": "ui_group",
+        "name": "Default",
+        "tab": "5b40cc66a107e8b3",
+        "order": 1,
+        "disp": true,
+        "width": 6,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "866f60495e96129a",
+        "type": "ui_group",
+        "name": "Medições",
+        "tab": "9078ec3124031f30",
+        "order": 1,
+        "disp": true,
+        "width": 6,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "7eccd24e4b2d5541",
+        "type": "ui_tab",
+        "name": "Projecto_IC_ConsultarA",
+        "icon": "dashboard",
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "401280e95cbae6e4",
+        "type": "ui_tab",
+        "name": "Projecto_IC",
+        "icon": "dashboard",
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "a9e7d6c5efdac271",
+        "type": "ui_tab",
+        "name": "ProjectoIC_EnviarProduto",
+        "icon": "dashboard",
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "5b40cc66a107e8b3",
+        "type": "ui_tab",
+        "name": "Projecto_IC_ConsumidorFinal",
+        "icon": "dashboard",
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "9078ec3124031f30",
+        "type": "ui_tab",
+        "name": "Proejcto_IC_Trasporte",
+        "icon": "dashboard",
+        "disabled": false,
+        "hidden": false
+    }
+]
